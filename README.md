@@ -65,9 +65,7 @@ cd SC4020-DataMiningProject
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -U pip
-python -m pip install -r requirements.txt
-python -m nltk.downloader stopwords  # first run only
+pip install -r requirements.txt
 ```
 
 **Windows (PowerShell)**
@@ -76,7 +74,6 @@ py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -U pip
 python -m pip install -r requirements.txt
-python -m nltk.downloader stopwords  # first run only
 ```
 
 ---
@@ -98,7 +95,7 @@ python3 -m src.cli grid --dataset fiqa --split dev \
 ```
 NFCorpus:
 ```bash
-python3 -m src.cli grid --dataset fiqa --split dev \
+python3 -m src.cli grid --dataset nfcorpus --split dev \
   --grid "0.8,0.4;0.8,0.5;0.8,0.6;0.8,0.7;0.9,0.4;0.9,0.5;0.9,0.6;0.9,0.7;1.0,0.4;1.0,0.5;1.0,0.6;1.0,0.7;1.2,0.4;1.2,0.5;1.2,0.6;1.2,0.7;1.4,0.4;1.4,0.5;1.4,0.6;1.4,0.7;1.6,0.4;1.6,0.5;1.6,0.6;1.6,0.7"
 ```
 
