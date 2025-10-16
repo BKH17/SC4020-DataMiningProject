@@ -6,9 +6,12 @@ def mrr_at_k(pred_ids, gold_ids, k=10):
             return 1.0 / rank
     return 0.0
 
+
 def recall_at_k(pred_ids, gold_ids, k=10):
-    if not gold_ids: return 0.0
+    if not gold_ids:
+        return 0.0
     return len(set(pred_ids[:k]) & gold_ids) / len(gold_ids)
+
 
 def ndcg_at_k(pred_ids, gold_ids, k=10):
     dcg = 0.0
