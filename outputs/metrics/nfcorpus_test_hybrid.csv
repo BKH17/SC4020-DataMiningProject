@@ -1,0 +1,12 @@
+model,dataset,split,alpha,k1,b,k,NDCG@k,MAP@k,Recall@k,P@k
+hybrid_alpha_0.0,nfcorpus,test,0.0,0.9,0.5,10,0.30682,0.1187,0.14688,0.21672
+hybrid_alpha_0.1,nfcorpus,test,0.1,0.9,0.5,10,0.34063,0.13464,0.16901,0.24458
+hybrid_alpha_0.2,nfcorpus,test,0.2,0.9,0.5,10,0.35217,0.13926,0.17456,0.25325
+hybrid_alpha_0.3,nfcorpus,test,0.3,0.9,0.5,10,0.36054,0.14172,0.17887,0.26254
+hybrid_alpha_0.4,nfcorpus,test,0.4,0.9,0.5,10,0.36782,0.14356,0.18201,0.27152
+hybrid_alpha_0.5,nfcorpus,test,0.5,0.9,0.5,10,0.36819,0.14235,0.17722,0.27461
+hybrid_alpha_0.6,nfcorpus,test,0.6,0.9,0.5,10,0.36734,0.14162,0.1756,0.27307
+hybrid_alpha_0.7,nfcorpus,test,0.7,0.9,0.5,10,0.36926,0.14259,0.1756,0.27307
+hybrid_alpha_0.8,nfcorpus,test,0.8,0.9,0.5,10,0.37132,0.1436,0.1756,0.27307
+hybrid_alpha_0.9,nfcorpus,test,0.9,0.9,0.5,10,0.37143,0.14431,0.1756,0.27307
+hybrid_alpha_1.0,nfcorpus,test,1.0,0.9,0.5,10,0.3681,0.14183,0.1756,0.27307

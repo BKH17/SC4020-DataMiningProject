@@ -1,0 +1,7 @@
+model,dataset,split,k,NDCG@k,MAP@k,Recall@k,P@k
+bge-base-en-v1.5,/home/ducanh/SC4020/data/nfcorpus,test,1,0.45046,0.06352,0.06352,0.47059
+bge-base-en-v1.5,/home/ducanh/SC4020/data/nfcorpus,test,3,0.42771,0.10554,0.11623,0.40454
+bge-base-en-v1.5,/home/ducanh/SC4020/data/nfcorpus,test,5,0.40478,0.1223,0.14109,0.35294
+bge-base-en-v1.5,/home/ducanh/SC4020/data/nfcorpus,test,10,0.3681,0.14183,0.1756,0.27307
+bge-base-en-v1.5,/home/ducanh/SC4020/data/nfcorpus,test,100,0.33721,0.17945,0.332,0.08529
+bge-base-en-v1.5,/home/ducanh/SC4020/data/nfcorpus,test,1000,0.42631,0.19455,0.65927,0.02152
