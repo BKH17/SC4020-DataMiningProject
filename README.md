@@ -1,13 +1,14 @@
-# SC4020 – BM25 Similarity Search on BEIR (FiQA-2018 & NFCorpus)
+# SC4020 – Information Retrieval on BEIR (FiQA-2018 & NFCorpus)
 
-A minimal, reproducible pipeline for Okapi **BM25** retrieval on two BEIR datasets:
+A minimal, reproducible pipeline for **BM25** and **BGE** (dense) retrieval on two BEIR datasets:
 - **FiQA-2018** (finance QA)
 - **NFCorpus** (consumer health)
 
 Features:
-- Stop-word–aware tokenization (keeps negations like *not*, *never*)
-- Hyperparameter sweep for **k1** and **b** with **MRR@k / Recall@k / nDCG@k**
-- TREC run file export
+- **BM25**: Stop-word–aware tokenization (keeps negations like *not*, *never*)
+- **BM25**: Hyperparameter sweep for **k1** and **b** with **MRR@k / Recall@k / nDCG@k**
+- **BGE**: Dense retrieval using BAAI/bge-base-en-v1.5 sentence embeddings
+- TREC run file export for both methods
 - Ad-hoc top-k search for any query
 - Dataset/split-aware CLI (`--dataset {fiqa|nfcorpus}`, `--split {train|dev|test}`)
 
@@ -36,6 +37,7 @@ SC4020-DataMiningProject/
 ├─ src/
 │ ├─ cli.py
 │ ├─ bm25_runner.py
+│ ├─ bge_evaluation.py
 │ ├─ metrics.py
 │ ├─ textproc.py
 │ └─ utils_io.py
@@ -80,7 +82,7 @@ python -m pip install -r requirements.txt
 
 ## How to run
 
-### A) ****Hyperparameter sweep (tune on dev) + TREC run****
+### A) **BM25: Hyperparameter sweep (tune on dev) + TREC run**
 
 Runs a grid of (k1,b), evaluates against qrels, writes a metrics CSV and a TREC run file.
 
@@ -107,7 +109,7 @@ Outputs:
 <qid> Q0 <docid> <rank> <score> bm25_sw
 ```
 
-### B) **Ad-hoc search (no qrels needed)**
+### B) **BM25: Ad-hoc search (no qrels needed)**
 
 Returns top-k docs for a free-text query with chosen BM25 params.
 ```bash
@@ -119,3 +121,25 @@ python3 -m src.cli search --dataset nfcorpus \
   --k1 1.4 --b 0.4 --topk 5 \
   --query "phosphorus and cardiovascular risk"
 ```
+
+### C) **BGE: Dense retrieval evaluation**
+
+Runs BGE (BAAI/bge-base-en-v1.5) dense retrieval, evaluates on test split, and saves metrics + TREC run file.
+
+**Note:** First run will download the 438MB BGE model (~5-10 minutes depending on connection).
+
+```bash
+python src/bge_evaluation.py
+```
+
+This will:
+- Load corpus, queries, and qrels from `data/nfcorpus/`
+- Encode documents and queries using BGE embeddings
+- Retrieve top documents using cosine similarity
+- Evaluate at k=[1, 3, 5, 10, 100, 1000]
+- Save metrics to `outputs/metrics/nfcorpus_test_bge_base.csv`
+- Save TREC run file to `outputs/runs/nfcorpus_test.bge_base.trec`
+
+**Outputs:**
+- Metrics CSV contains: NDCG@k, MAP@k, Recall@k, P@k for all k values
+- TREC run file format: `<qid> Q0 <docid> <rank> <score> bge_base_nfcorpus`
