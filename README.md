@@ -127,7 +127,7 @@ python3 -m src.cli search --dataset fiqa \
   --query "difference between stock split and reverse stock split"
   
 python3 -m src.cli search --dataset nfcorpus \
-  --k1 1.4 --b 0.4 --topk 5 \
+  --k1 1.6 --b 0.7 --topk 5 \
   --query "phosphorus and cardiovascular risk"
 ```
 
@@ -138,7 +138,7 @@ Runs BGE (BAAI/bge-base-en-v1.5) dense retrieval, evaluates on test split, and s
 **Note:** First run will download the 438MB BGE model (~5-10 minutes depending on connection).
 
 ```bash
-python src/bge_evaluation.py
+python3 src/bge_evaluation.py
 ```
 
 This will:
