@@ -14,6 +14,13 @@ def data_paths(root: Path, dataset: str, split: str):
     return corpus, queries, qrels
 
 
+def _parse_ks(ks_str: str):
+    try:
+        return tuple(sorted({int(x) for x in ks_str.split(",") if x.strip()}))
+    except Exception as e:
+        raise argparse.ArgumentTypeError(f"Bad --ks value: {ks_str!r}") from e
+
+
 def build_parser():
     p = argparse.ArgumentParser("BM25 on BEIR datasets (FiQA + NFCorpus)")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -23,10 +30,12 @@ def build_parser():
     g.add_argument("--data_root", default="data", help="root data folder")
     g.add_argument("--dataset", default="fiqa", choices=["fiqa", "nfcorpus"], help="dataset name")
     g.add_argument("--split", default="test", choices=["train", "dev", "test"], help="qrels split")
-    g.add_argument("--k", type=int, default=10, help="cutoff for MRR/Recall/nDCG")
+    g.add_argument("--ks", type=_parse_ks, default=(1, 5, 10, 100),
+                   help="comma-separated cutoffs, e.g., '1,5,10,100'")
+    g.add_argument("--k", type=int, default=10, help="(deprecated) kept for compat; ignored if --ks set")
     g.add_argument(
         "--grid",
-        default="0.8,0.4;0.8,0.5;0.8,0.6;0.8,0.7;0.9,0.4;0.9,0.5;0.9,0.6;0.9,0.7;1.0,0.4;1.0,0.5;1.0,0.6;1.0,0.7;1.2,0.4;1.2,0.5;1.2,0.6;1.2,0.7;1.4,0.4;1.4,0.5;1.4,0.6;1.4,0.7;1.6,0.4;1.6,0.5;1.6,0.6;1.6,0.7",
+        default="0.8,0.3;0.8,0.4;0.8,0.5;0.8,0.6;0.8,0.7;0.9,0.3;0.9,0.4;0.9,0.5;0.9,0.6;0.9,0.7;1.0,0.3;1.0,0.4;1.0,0.5;1.0,0.6;1.0,0.7;1.1,0.3;1.1,0.4;1.1,0.5;1.1,0.6;1.1,0.7;1.2,0.3;1.2,0.4;1.2,0.5;1.2,0.6;1.2,0.7;1.3,0.3;1.3,0.4;1.3,0.5;1.3,0.6;1.3,0.7;1.4,0.3;1.4,0.4;1.4,0.5;1.4,0.6;1.4,0.7;1.5,0.3;1.5,0.4;1.5,0.5;1.5,0.6;1.5,0.7;1.6,0.3;1.6,0.4;1.6,0.5;1.6,0.6;1.6,0.7",
         help="semicolon-separated pairs k1,b (e.g. 0.9,0.5;1.2,0.5)",
     )
     g.add_argument("--out_csv", default=None, help="metrics CSV path (defaults under outputs/metrics)")
@@ -52,7 +61,6 @@ def do_grid(args):
     queries = load_queries(queries_p)
     gold, info = load_qrels_robust(qrels_p)
 
-    # Keep only queries that have qrels in the chosen split
     qids = set(gold.keys())
     queries = [(qid, text) for qid, text in queries if qid in qids]
 
@@ -68,7 +76,7 @@ def do_grid(args):
         k1s, bs = pair.split(",")
         grid.append((float(k1s), float(bs)))
 
-    df = small_grid(tokens, doc_ids, queries, gold, tokenize_finance, grid, K=args.k)
+    df = small_grid(tokens, doc_ids, queries, gold, tokenize_finance, grid, Ks=args.ks)
 
     out_csv = (
         Path(args.out_csv)
