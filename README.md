@@ -135,3 +135,9 @@ This will:
 **Outputs:**
 - Metrics CSV contains: NDCG@k, MAP@k, Recall@k, P@k for all k values
 - TREC run file format: `<qid> Q0 <docid> <rank> <score> bge_base_nfcorpus`
+
+---
+
+## Visualizations
+
+For detailed visualizations and some analysis of the results, see **`analysis.ipynb`**.
