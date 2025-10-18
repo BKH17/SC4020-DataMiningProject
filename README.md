@@ -1,8 +1,6 @@
-# SC4020 – Information Retrieval on BEIR (FiQA-2018 & NFCorpus)
+# SC4020 – Information Retrieval on BEIR (NFCorpus)
 
-A minimal, reproducible pipeline for **BM25** and **BGE** (dense) retrieval on two BEIR datasets:
-- **FiQA-2018** (finance QA)
-- **NFCorpus** (consumer health)
+A minimal, reproducible pipeline for **BM25** and **BGE** (dense) retrieval on **NFCorpus**, a consumer health dataset
 
 Features:
 - **BM25**: Stop-word–aware tokenization (keeps negations like *not*, *never*)
@@ -10,38 +8,32 @@ Features:
 - **BGE**: Dense retrieval using BAAI/bge-base-en-v1.5 sentence embeddings
 - TREC run file export for both methods
 - Ad-hoc top-k search for any query
-- Dataset/split-aware CLI (`--dataset {fiqa|nfcorpus}`, `--split {train|dev|test}`)
 
 ## Project structure
 
 ```text
 SC4020-DataMiningProject/
 ├─ data/
-│ ├─ fiqa/
-│ │ ├─ corpus.jsonl
-│ │ ├─ queries.jsonl
-│ │ └─ qrels/
-│ │ ├─ train.tsv
-│ │ ├─ dev.tsv
-│ │ └─ test.tsv
-│ └─ nfcorpus/
-│ ├─ corpus.jsonl
-│ ├─ queries.jsonl
-│ └─ qrels/
-│ ├─ train.tsv
-│ ├─ dev.tsv
-│ └─ test.tsv
+│  └─ nfcorpus/
+│     ├─ corpus.jsonl
+│     ├─ queries.jsonl
+│     └─ qrels/
+│        ├─ train.tsv
+│        ├─ dev.tsv
+│        └─ test.tsv
 ├─ outputs/
-│ ├─ metrics/
-│ └─ runs/
+│  ├─ metrics/
+│  └─ runs/
 ├─ src/
-│ ├─ cli.py
-│ ├─ bm25_runner.py
-│ ├─ bge_evaluation.py
-│ ├─ metrics.py
-│ ├─ textproc.py
-│ └─ utils_io.py
+│  ├─ cli.py
+│  ├─ bm25_runner.py
+│  ├─ bge_evaluation.py
+│  ├─ hybrid_evaluation.py
+│  ├─ metrics.py
+│  ├─ textproc.py
+│  └─ utils_io.py
 └─ requirements.txt
+
 ```
 
 **Notes on file formats**
@@ -50,7 +42,7 @@ SC4020-DataMiningProject/
 - `qrels/*.tsv`: any of the following headers (case-insensitive) are accepted:  
   - query id: `qid | query-id | query_id`  
   - doc id: `docid | corpus-id | corpus_id | doc_id`  
-  - relevance: `score | relevance | label` (we treat **rel > 0** as relevant ⇒ binary-gain metrics).
+  - relevance: score | relevance | label (rel > 0 is relevant ⇒ binary-gain metrics)
 
 ---
 
@@ -90,15 +82,10 @@ Make directory:
 ```bash
 mkdir -p outputs/metrics outputs/runs
 ```
-FiQA:
+
+Run on **NFCorpus** (example grid):
 ```bash
-python3 -m src.cli grid --dataset fiqa --split dev \
-  --grid "0.8,0.3;0.8,0.4;0.8,0.5;0.8,0.6;0.8,0.7;0.9,0.3;0.9,0.4;0.9,0.5;0.9,0.6;0.9,0.7;1.0,0.3;1.0,0.4;1.0,0.5;1.0,0.6;1.0,0.7;1.1,0.3;1.1,0.4;1.1,0.5;1.1,0.6
-;1.1,0.7;1.2,0.3;1.2,0.4;1.2,0.5;1.2,0.6;1.2,0.7;1.3,0.3;1.3,0.4;1.3,0.5;1.3,0.6;1.3,0.7;1.4,0.3;1.4,0.4;1.4,0.5;1.4,0.6;1.4,0.7;1.5,0.3;1.5,0.4;1.5,0.5;1.5,0.6;1.5,0.7;1.6,0.3;1.6,0.4;1.6,0.5;1.6,0.6;1.6,0.7"
-```
-NFCorpus:
-```bash
-python3 -m src.cli grid --dataset nfcorpus --split dev \
+python3 -m src.cli grid --dataset nfcorpus --split test \
   --grid "0.8,0.3;0.8,0.4;0.8,0.5;0.8,0.6;0.8,0.7;0.9,0.3;0.9,0.4;0.9,0.5;0.9,0.6;0.9,0.7;1.0,0.3;1.0,0.4;1.0,0.5;1.0,0.6;1.0,0.7;1.1,0.3;1.1,0.4;1.1,0.5;1.1,0.6
 ;1.1,0.7;1.2,0.3;1.2,0.4;1.2,0.5;1.2,0.6;1.2,0.7;1.3,0.3;1.3,0.4;1.3,0.5;1.3,0.6;1.3,0.7;1.4,0.3;1.4,0.4;1.4,0.5;1.4,0.6;1.4,0.7;1.5,0.3;1.5,0.4;1.5,0.5;1.5,0.6;1.5,0.7;1.6,0.3;1.6,0.4;1.6,0.5;1.6,0.6;1.6,0.7"
 ```
@@ -115,17 +102,13 @@ MRR@100,Recall@100,nDCG@100
 ```
 - **TREC run files** (for the best k1,b on the chosen split): one line per (query, doc) with BM25 score.
 ```
-<qid> Q0 <docid> <rank> <score> bm25_sw_<dataset>
+<qid> Q0 <docid> <rank> <score> bm25_sw_nfcorpus
 ```
 
 ### B) **BM25: Ad-hoc search (no qrels needed)**
 
 Returns top-k docs for a free-text query with chosen BM25 params.
-```bash
-python3 -m src.cli search --dataset fiqa \
-  --k1 0.8 --b 0.4 --topk 5 \
-  --query "difference between stock split and reverse stock split"
-  
+```bash  
 python3 -m src.cli search --dataset nfcorpus \
   --k1 1.6 --b 0.7 --topk 5 \
   --query "phosphorus and cardiovascular risk"
