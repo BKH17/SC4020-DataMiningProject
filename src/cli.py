@@ -22,13 +22,13 @@ def _parse_ks(ks_str: str):
 
 
 def build_parser():
-    p = argparse.ArgumentParser("BM25 on BEIR datasets (FiQA + NFCorpus)")
+    p = argparse.ArgumentParser("BM25 on BEIR (NFCorpus)")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     # Grid eval
     g = sub.add_parser("grid", help="Evaluate a (k1,b) grid and write metrics + TREC run")
     g.add_argument("--data_root", default="data", help="root data folder")
-    g.add_argument("--dataset", default="fiqa", choices=["fiqa", "nfcorpus"], help="dataset name")
+    g.add_argument("--dataset", default="nfcorpus", choices=["nfcorpus"], help="dataset name")
     g.add_argument("--split", default="test", choices=["train", "dev", "test"], help="qrels split")
     g.add_argument("--ks", type=_parse_ks, default=(1, 5, 10, 100),
                    help="comma-separated cutoffs, e.g., '1,5,10,100'")
@@ -44,7 +44,7 @@ def build_parser():
     # Ad-hoc search
     s = sub.add_parser("search", help="Ad-hoc search for a single query")
     s.add_argument("--data_root", default="data")
-    s.add_argument("--dataset", default="fiqa", choices=["fiqa", "nfcorpus"])
+    s.add_argument("--dataset", default="nfcorpus", choices=["nfcorpus"])
     s.add_argument("--k1", type=float, default=0.9)
     s.add_argument("--b", type=float, default=0.5)
     s.add_argument("--topk", type=int, default=10)
